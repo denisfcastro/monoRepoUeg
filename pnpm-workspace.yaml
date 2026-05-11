@@ -1,0 +1,12 @@
+packages:
+  - apps/*
+  - packages/*
+onlyBuiltDependencies:
+  - '@nestjs/core'
+  - '@parcel/watcher'
+  - '@scarf/scarf'
+  - better-sqlite3
+  - esbuild
+  - lmdb
+  - msgpackr-extract
+  - unrs-resolver
