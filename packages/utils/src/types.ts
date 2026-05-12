@@ -35,3 +35,12 @@ export interface AIResponse<T = any> {
     details?: any;
   };
 }
+
+export interface ForgotPasswordDto {
+  email: string;
+}
+
+export interface ResetPasswordDto {
+  token: string;
+  password: string;
+}

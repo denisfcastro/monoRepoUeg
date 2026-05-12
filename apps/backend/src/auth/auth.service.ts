@@ -1,14 +1,17 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
+import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
 import { LoginDto, AuthResponse } from '@repo/utils';
+import { MailService } from './mail.service';
+import * as crypto from 'crypto';
 
 @Injectable()
 export class AuthService {
   constructor(
     private usersService: UsersService,
     private jwtService: JwtService,
+    private mailService: MailService,
   ) {}
 
   async validateUser(email: string, pass: string): Promise<any> {
@@ -46,5 +49,32 @@ export class AuthService {
     }
     
     return this.usersService.create(registerDto);
+  }
+
+  async forgotPassword(email: string): Promise<void> {
+    const user = await this.usersService.findByEmail(email);
+    if (!user) {
+      throw new NotFoundException('Usuário não encontrado');
+    }
+
+    const token = crypto.randomBytes(20).toString('hex');
+    const expires = new Date();
+    expires.setHours(expires.getHours() + 1);
+
+    await this.usersService.updateResetToken(user.id, token, expires);
+    await this.mailService.sendPasswordResetEmail(email, token);
+  }
+
+  async resetPassword(resetDto: any): Promise<void> {
+    const user = await this.usersService.findByResetToken(resetDto.token);
+    
+    if (!user || !user.resetPasswordExpires || user.resetPasswordExpires < new Date()) {
+      throw new BadRequestException('Token inválido ou expirado');
+    }
+
+    const salt = await bcrypt.genSalt();
+    const hashedPassword = await bcrypt.hash(resetDto.password, salt);
+
+    await this.usersService.updatePassword(user.id, hashedPassword);
   }
 }

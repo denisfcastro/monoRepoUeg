@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Observable, tap } from 'rxjs';
 import { environment } from '../../../../environments/environment';
-import { User, LoginDto, RegisterDto, AuthResponse } from '@repo/utils';
+import { User, LoginDto, RegisterDto, AuthResponse, ForgotPasswordDto, ResetPasswordDto } from '@repo/utils';
 
 @Injectable({
   providedIn: 'root',
@@ -37,6 +37,14 @@ export class AuthService {
 
   register(data: RegisterDto): Observable<any> {
     return this.http.post(`${this.apiUrl}/register`, data);
+  }
+
+  forgotPassword(data: ForgotPasswordDto): Observable<any> {
+    return this.http.post(`${this.apiUrl}/forgot-password`, data);
+  }
+
+  resetPassword(data: ResetPasswordDto): Observable<any> {
+    return this.http.post(`${this.apiUrl}/reset-password`, data);
   }
 
   logout(): void {

@@ -62,7 +62,7 @@ import { AuthService } from '../../services/auth.service';
               <input type="checkbox" class="rounded border-white/20 bg-white/5 text-sky-500 focus:ring-offset-0 focus:ring-sky-500 mr-2" />
               Lembrar-me
             </label>
-            <a href="#" class="text-sky-400 hover:text-sky-300 transition">Esqueceu a senha?</a>
+            <a routerLink="/forgot-password" class="text-sky-400 hover:text-sky-300 transition">Esqueceu a senha?</a>
           </div>
 
           <!-- Submit Button -->
