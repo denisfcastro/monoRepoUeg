@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as nodemailer from 'nodemailer';
+import * as SMTPTransport from 'nodemailer/lib/smtp-transport';
 
 @Injectable()
 export class MailService {
@@ -20,7 +21,7 @@ export class MailService {
       },
       connectionTimeout: 5000,
       timeout: 5000,
-    });
+    } as SMTPTransport.Options);
   }
 
   async sendPasswordResetEmail(email: string, token: string) {

@@ -6,6 +6,12 @@ import { RegisterDto } from './dto/register.dto';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
+import { Request as ExpressRequest } from 'express';
+import { User } from '../users/user.entity';
+
+interface RequestWithUser extends ExpressRequest {
+  user: Omit<User, 'password'>;
+}
 
 @ApiTags('auth')
 @Controller('auth')
@@ -19,7 +25,7 @@ export class AuthController {
   @ApiBody({ type: LoginDto })
   @ApiResponse({ status: 200, description: 'Login bem sucedido' })
   @ApiResponse({ status: 401, description: 'Credenciais inválidas ou usuário inativo' })
-  async login(@Request() req: any) {
+  async login(@Request() req: RequestWithUser) {
     return this.authService.login(req.user);
   }
 

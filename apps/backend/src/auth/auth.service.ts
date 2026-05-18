@@ -1,10 +1,13 @@
-import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
+import { Injectable, HttpStatus } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
-import { LoginDto, AuthResponse } from '@repo/utils';
+import { RegisterDto, AuthResponse } from '@repo/utils';
 import { MailService } from './mail.service';
 import * as crypto from 'crypto';
+import { User } from '../users/user.entity';
+import { ResetPasswordDto } from './dto/reset-password.dto';
+import { BusinessException } from '../common/exceptions/business.exception';
 
 @Injectable()
 export class AuthService {
@@ -14,7 +17,7 @@ export class AuthService {
     private mailService: MailService,
   ) {}
 
-  async validateUser(email: string, pass: string): Promise<any> {
+  async validateUser(email: string, pass: string): Promise<Omit<User, 'password'> | null> {
     const user = await this.usersService.findByEmail(email);
     
     if (user && await bcrypt.compare(pass, user.password)) {
@@ -25,7 +28,7 @@ export class AuthService {
     return null;
   }
 
-  async login(user: any): Promise<AuthResponse> {
+  async login(user: Omit<User, 'password'>): Promise<AuthResponse> {
     const payload = { email: user.email, sub: user.id, role: user.role };
     
     return {
@@ -40,12 +43,12 @@ export class AuthService {
     };
   }
 
-  async register(registerDto: any): Promise<any> {
+  async register(registerDto: RegisterDto): Promise<User> {
     const existingUser = await this.usersService.findByEmail(registerDto.email);
     if (existingUser) {
       // Regra: se já existir, redirecionar (ou retornar erro para o front tratar)
       // Aqui vamos lançar um erro específico de negócio
-      throw new BadRequestException('E-mail já cadastrado');
+      throw new BusinessException('AUTH_EMAIL_ALREADY_EXISTS', 'E-mail já cadastrado');
     }
     
     return this.usersService.create(registerDto);
@@ -54,7 +57,7 @@ export class AuthService {
   async forgotPassword(email: string): Promise<void> {
     const user = await this.usersService.findByEmail(email);
     if (!user) {
-      throw new NotFoundException('Usuário não encontrado');
+      throw new BusinessException('AUTH_USER_NOT_FOUND', 'Usuário não encontrado', HttpStatus.NOT_FOUND);
     }
 
     const token = crypto.randomBytes(20).toString('hex');
@@ -65,11 +68,11 @@ export class AuthService {
     await this.mailService.sendPasswordResetEmail(email, token);
   }
 
-  async resetPassword(resetDto: any): Promise<void> {
+  async resetPassword(resetDto: ResetPasswordDto): Promise<void> {
     const user = await this.usersService.findByResetToken(resetDto.token);
     
     if (!user || !user.resetPasswordExpires || user.resetPasswordExpires < new Date()) {
-      throw new BadRequestException('Token inválido ou expirado');
+      throw new BusinessException('AUTH_INVALID_RESET_TOKEN', 'Token inválido ou expirado');
     }
 
     const salt = await bcrypt.genSalt();

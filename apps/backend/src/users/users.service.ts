@@ -1,9 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './user.entity';
 import { RegisterDto } from '@repo/utils';
 import * as bcrypt from 'bcryptjs';
+import { BusinessException } from '../common/exceptions/business.exception';
 
 @Injectable()
 export class UsersService {
@@ -38,7 +39,7 @@ export class UsersService {
     await this.usersRepository.update(id, updateData);
     const user = await this.findById(id);
     if (!user) {
-      throw new Error('User not found after update');
+      throw new BusinessException('USER_NOT_FOUND', 'Usuário não encontrado após atualização', HttpStatus.NOT_FOUND);
     }
     return user;
   }
