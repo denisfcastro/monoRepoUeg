@@ -8,6 +8,7 @@ import { JogoFormComponent } from './features/jogos/components/jogo-form/jogo-fo
 import { JogoDetailComponent } from './features/jogos/components/jogo-detail/jogo-detail.component';
 import { JogoAdminComponent } from './features/jogos/components/jogo-admin/jogo-admin.component';
 import { MinhasApostasComponent } from './features/jogos/components/minhas-apostas/minhas-apostas.component';
+import { JogosDashboardComponent } from './features/jogos/components/jogos-dashboard/jogos-dashboard.component';
 import { authGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
@@ -21,6 +22,7 @@ export const routes: Routes = [
     children: [
       { path: '', redirectTo: 'jogos', pathMatch: 'full' },
       { path: 'jogos', component: JogoListComponent },
+      { path: 'jogos/painel', component: JogosDashboardComponent },
       { path: 'jogos/novo', component: JogoFormComponent },
       { path: 'jogos/:id', component: JogoDetailComponent },
       { path: 'jogos/:id/editar', component: JogoFormComponent },

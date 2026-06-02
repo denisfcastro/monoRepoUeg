@@ -12,12 +12,13 @@ import { AuthService } from '../../../auth/services/auth.service';
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         <div class="flex items-center space-x-8">
           <a routerLink="/" class="flex items-center space-x-2">
-            <span class="text-2xl font-bold bg-linear-to-r from-emerald-400 to-teal-500 bg-clip-text text-transparent">BET-UEG</span>
+            <span class="text-2xl font-bold bg-linear-to-r from-emerald-400 to-teal-500 bg-clip-text text-transparent">PAQUE-BET</span>
             <span class="bg-slate-800 text-xs px-2 py-1 rounded text-slate-300 font-mono">v1.0</span>
           </a>
           <nav class="hidden md:flex space-x-6 text-sm font-medium">
             <a routerLink="/jogos" routerLinkActive="text-emerald-400" class="text-slate-300 hover:text-white transition">Partidas</a>
             <a routerLink="/minhas-apostas" routerLinkActive="text-emerald-400" class="text-slate-300 hover:text-white transition">Minhas Apostas</a>
+            <a *ngIf="authService.currentUser()?.role === 'ADMIN'" routerLink="/jogos/painel" routerLinkActive="text-emerald-400" class="text-slate-300 hover:text-white transition">Painel de Controle</a>
           </nav>
         </div>
 
