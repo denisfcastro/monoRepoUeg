@@ -4,6 +4,9 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
+import { JogosModule } from './jogos/jogos.module';
+import { PalpitesModule } from './palpites/palpites.module';
+import { ApostasModule } from './apostas/apostas.module';
 import { ConfigModule } from '@nestjs/config';
 
 @Module({
@@ -18,6 +21,9 @@ import { ConfigModule } from '@nestjs/config';
     }),
     UsersModule,
     AuthModule,
+    JogosModule,
+    PalpitesModule,
+    ApostasModule,
   ],
   controllers: [AppController],
   providers: [AppService],

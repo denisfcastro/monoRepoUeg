@@ -1,4 +1,4 @@
-# Skill: New Feature
+kill: New Feature
 
 Quando solicitado a criar uma nova feature, sempre:
 
